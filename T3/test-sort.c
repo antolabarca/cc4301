@@ -21,6 +21,7 @@ int main() {
     fprintf(stderr, "El resultado es incorrecto\n");
     exit(1);
   }
+
   printf("Ahora el arreglo: pedro gonzalez, luis gonzalez\n");
   char *noms3[]= {"pedro gonzalez", "luis gonzalez"};
   sort(noms3, 2);
@@ -41,7 +42,7 @@ int main() {
   }
 
   printf("Ahora un arreglo de 10 nombres\n");
-  char *noms[]= {"pedro gonzalez", "juan perez" , "diego gonzalez", "ana gonzalez", "vero fernandez", "jose perez", "monica fernandez", "alberto perez", "maria fernandez", "tatiana jerez"};
+  char *noms[]= {"pedro gonzalez", "juan perez", "diego gonzalez", "ana gonzalez", "vero fernandez", "jose perez", "monica fernandez", "alberto perez", "maria fernandez", "tatiana jerez"};
   char *refs[]= {"maria fernandez", "monica fernandez", "vero fernandez", "ana gonzalez", "diego gonzalez", "pedro gonzalez", "tatiana jerez", "alberto perez", "jose perez", "juan perez"};
   printf("El arreglo desordenado es:\n");
   printf("--------------------------\n");

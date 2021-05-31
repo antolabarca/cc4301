@@ -26,6 +26,7 @@ sort:                   # void sort(char *noms[], int n) { // registros a0, a1
     mv      t0,a0       #   // p esta en registro t0
                         #   while (p<ult) {
     j       .while_cond #     // la condicion del while se evalua al final
+
 .while_begin:           #     // del ciclo para mayor eficiencia
 
     # Hasta aca no puede modificar nada
@@ -39,10 +40,48 @@ sort:                   # void sort(char *noms[], int n) { // registros a0, a1
     # El valor de p esta temporalmente en el registro t0
     lw      a0,0(t0)    #     int rc= strcmp(p[0], p[1]); // registro t1
     lw      a1,4(t0)
-    sw      t0,56(sp)   # resguardar p en memoria antes de llamar a strcmp
-    call    strcmp      #     // valor retornado queda en registro a0
-                        #     // p ya no esta en el registro t0
-    mv      t1,a0       #     // Dejar resultado de la comparacion en t1
+    # a0 y a1 apuntan al primer char de cada nombre
+
+	sw	    s0,0(sp)    # resguarda s0
+	sw	    s1,4(sp)    # resguarda s1
+    sw      t0,56(sp)   # resguarda t0
+	mv	    s0,a0       # copia a0 en s0
+	mv	    s1,a1       # copia a1 en s1
+    li	    a7,32       # a7 = espacio
+
+# inicia la busqueda del espacio del nombre 0
+	lbu	    a4,0(a0)    # a4 = a0[0]
+	beq	    a4,a7,ini1  # if a4=espacio goto ini1
+
+wh0:        # while para buscar el espacio del nombre 0
+	addi	a0,a0,1     # a0++, apunta al siguiente char
+	lbu	    a5,0(a0)    # a5 = a0[0]
+	bne	    a5,a7,wh0   # if a5!=espacio goto wh0
+# se encontro el espacio del nombre 0, a0 apunta
+
+ini1:       # inicia la busqueda del espacio del nombre 1+
+	lbu	    a4,0(a1)    # a4 = a1[0] primer char del nombre
+	beq	    a4,a7,comp  # if a4=espacio goto comp
+
+wh1:        # while para buscar el espacio del nombre 1
+	addi	a1,a1,1     # a1++
+	lbu	    a5,0(a1)    # a5 = a0[0]
+	bne	    a5,a7,wh1   # if a5!=espacio goto wh1
+#se encontro el espacio del nombre 1, a1 apunta
+
+comp:
+	call	strcmp      # strcmp a0, a1
+	bne	    a0,zero,fin # if a0!=0 goto fin
+	mv	    a1,s1       # a1= s1
+	mv	    a0,s0       # a0=s0
+	call	strcmp
+fin:
+	lw	    s0,0(sp)
+	lw	    s1,4(sp)
+    lw      t0,56(sp)
+    mv      t1,a0
+	j       .decision
+
 
     #################################################
     ### Fin del codigo que Ud. debe modificar     ###
